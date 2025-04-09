@@ -1,5 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -7,11 +5,12 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -31,18 +30,33 @@ kotlin {
     sourceSets {
         
         androidMain.dependencies {
+            // COMPOSE
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
+            // KOIN
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
         }
         commonMain.dependencies {
+            // COMPOSE
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
+
+            // LIFECYCLE
             implementation(libs.androidx.lifecycle.runtime.compose)
+
+            // KOIN
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+
+            // NAVIGATION
+            implementation(libs.navigation.compose)
         }
     }
 }
@@ -71,10 +85,15 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
+    }
+    buildFeatures {
+        compose = true
     }
 }
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
 
