@@ -9,11 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.NavUri
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
-import androidx.navigation.parseStringAsNavUri
 import androidx.navigation.toRoute
 import com.lucasprioste.handlingdeeplink.presentation.core.navigation.DeepLinkHelper
 import com.lucasprioste.handlingdeeplink.presentation.core.navigation.Route
@@ -32,7 +32,7 @@ fun App(
 
     ObserveAsEvents(flow = deepLinkHelper.navigationEvents) { uri ->
         navController.handleDeepLink(
-            NavDeepLinkRequest.Builder.fromUri(uri = parseStringAsNavUri(uri)).build()
+            request = NavDeepLinkRequest.Builder.fromUri(uri = NavUri(uriString = uri)).build()
         )
     }
 
